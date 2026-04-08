@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>엑소코바이오 광고 성과 리포트 v2</title>
+<style>
+:root{--dark:#2C3E50;--header:#34495E;--light:#ECF0F1;--white:#FFFFFF;--green-bg:#E8F8F5;--red-bg:#FDEDEC;--blue-bg:#EBF5FB;--yellow-bg:#FEF9E7;--green:#27AE60;--red:#E74C3C;--gray:#7F8C8D;--border:#BDC3C7;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,sans-serif;background:#f5f5f5;color:#333;padding:20px;}
+header{margin-bottom:20px;}
+header h1{font-size:22px;color:var(--dark);font-weight:bold;}
+.subtitle{color:var(--gray);font-size:12px;margin-top:4px;}
+.tabs{display:flex;gap:3px;border-bottom:2px solid var(--dark);margin-bottom:20px;flex-wrap:wrap;}
+.tab{padding:8px 14px;border:none;background:var(--light);cursor:pointer;font-size:12px;font-weight:bold;color:var(--dark);border-radius:5px 5px 0 0;transition:background .2s;white-space:nowrap;}
+.tab.active{background:var(--dark);color:white;}
+.tab:hover:not(.active){background:var(--border);}
+.tab-content{display:none;}.tab-content.active{display:block;}
+table{width:100%;border-collapse:collapse;margin-bottom:16px;}
+th{background:var(--dark);color:white;font-size:11px;padding:8px;text-align:center;cursor:pointer;user-select:none;}
+th:hover{background:var(--header);}
+th::after{content:' ⇅';font-size:8px;opacity:.4;}
+th.sort-asc::after{content:' ▲';opacity:1;}
+th.sort-desc::after{content:' ▼';opacity:1;}
+td{padding:7px 8px;border:1px solid var(--border);font-size:12px;}
+tr:nth-child(even) td{background:#FAFAFA;}
+tr:nth-child(odd) td{background:white;}
+tr:hover td{background:var(--blue-bg)!important;}
+tr.total-row td{background:var(--blue-bg)!important;font-weight:bold;}
+td.num{text-align:right;font-variant-numeric:tabular-nums;}
+td.text{text-align:left;}
+td.center{text-align:center;}
+.positive{color:var(--green);font-weight:bold;}
+.negative{color:var(--red);font-weight:bold;}
+.section-title{font-size:14px;color:var(--dark);font-weight:bold;margin:18px 0 8px;}
+.card{background:white;border-radius:8px;padding:16px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.1);}
+.kpi-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+.kpi{background:white;border-radius:8px;padding:12px 16px;flex:1;min-width:130px;box-shadow:0 1px 3px rgba(0,0,0,.1);}
+.kpi-l{font-size:10px;color:var(--gray);margin-bottom:3px;}
+.kpi-v{font-size:17px;font-weight:bold;color:var(--dark);}
+.kpi-c{font-size:10px;margin-top:2px;}
+.ig-link{color:#E1306C;font-weight:bold;text-decoration:none;font-size:12px;}
+.ig-link:hover{text-decoration:underline;color:#B5215A;}
+.camp-badge{padding:2px 6px;border-radius:3px;font-size:10px;font-weight:bold;}
+.conv{background:#EBF5FB;color:#2980B9;}
+.traf{background:#E8F8F5;color:#27AE60;}
+.product-header{padding:10px 16px;border-radius:6px 6px 0 0;font-size:13px;font-weight:bold;color:white;}
+.chart-wrap{overflow-x:auto;}
+.priority-high{background:var(--red-bg);}
+.priority-mid{background:var(--yellow-bg);}
+.priority-low{background:var(--green-bg);}
+</style>
+</head>
+<body>
+<header>
+  <h1>엑소코바이오 광고 성과 리포트</h1>
+  <p class="subtitle">📅 분석 기간: 2026-03-31 ~ 2026-04-07 &nbsp;|&nbsp; 현재·비교: 04-07 vs 04-06 &nbsp;|&nbsp; 🔄 2026-04-08</p>
+</header>
+<nav class="tabs">
+  <button class="tab active" data-target="t-trend">📈 CPV·유입 추이</button>
+  <button class="tab" data-target="t-seeding">🎬 시딩 TOP5</button>
+  <button class="tab" data-target="t-summary">📊 총괄 비교</button>
+  <button class="tab" data-target="t-media">📡 매체별 성과</button>
+  <button class="tab" data-target="t-campaign">🎯 캠페인 성과</button>
+  <button class="tab" data-target="t-daily">📅 일별 추이</button>
+  <button class="tab" data-target="t-insight">💡 인사이트</button>
+</nav>
+
+<section id="t-trend" class="tab-content active">
+  <div class="kpi-row">
+    <div class="kpi" style="border-top:3px solid #E74C3C">
+      <div class="kpi-l">평균 CPV (4/1~4/7)</div>
+      <div class="kpi-v">226원</div>
+      <div class="kpi-c" style="color:var(--gray)">시청 1회당 광고비</div>
+    </div>
+    <div class="kpi" style="border-top:3px solid #27AE60">
+      <div class="kpi-l">최저 CPV 달성일</div>
+      <div class="kpi-v">30원</div>
+      <div class="kpi-c" style="color:var(--green)">04-05 기록</div>
+    </div>
+    <div class="kpi" style="border-top:3px solid #2980B9">
+      <div class="kpi-l">일평균 자사몰 세션</div>
+      <div class="kpi-v">596건</div>
+      <div class="kpi-c" style="color:var(--gray)">GA4 기준</div>
+    </div>
+    <div class="kpi" style="border-top:3px solid #F39C12">
+      <div class="kpi-l">세션 최고 일자</div>
+      <div class="kpi-v">1,061건</div>
+      <div class="kpi-c" style="color:#F39C12">04-03 기록</div>
+    </div>
+  </div>
+  <h2 class="section-title">📉 CPV 변화 & 자사몰 세션 추이</h2>
+  <div class="card">
+    <div class="chart-wrap"><svg width="100%" viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg"><rect width="700" height="220" fill="#FAFAFA" rx="6"/><text x="60" y="186" text-anchor="end" font-size="9" fill="#999">0원</text><line x1="65" y1="182" x2="650" y2="182" stroke="#E8E8E8" stroke-width="1"/><text x="60" y="146" text-anchor="end" font-size="9" fill="#999">164원</text><line x1="65" y1="142" x2="650" y2="142" stroke="#E8E8E8" stroke-width="1"/><text x="60" y="106" text-anchor="end" font-size="9" fill="#999">329원</text><line x1="65" y1="102" x2="650" y2="102" stroke="#E8E8E8" stroke-width="1"/><text x="60" y="66" text-anchor="end" font-size="9" fill="#999">494원</text><line x1="65" y1="62" x2="650" y2="62" stroke="#E8E8E8" stroke-width="1"/><text x="60" y="26" text-anchor="end" font-size="9" fill="#999">658원</text><line x1="65" y1="22" x2="650" y2="22" stroke="#E8E8E8" stroke-width="1"/><text x="654" y="186" font-size="9" fill="#999">0건</text><text x="654" y="146" font-size="9" fill="#999">318건</text><text x="654" y="106" font-size="9" fill="#999">636건</text><text x="654" y="66" font-size="9" fill="#999">954건</text><text x="654" y="26" font-size="9" fill="#999">1273건</text><path d="M 148.6,99.9 L 232.1,48.7 L 315.7,61.1 L 399.3,162.1 L 482.9,174.7 L 566.4,173.7 L 650.0,169.4" stroke="#E74C3C" stroke-width="2.5" fill="none"/><path d="M 65.0,152.2 L 148.6,123.3 L 232.1,119.3 L 315.7,48.7 L 399.3,120.5 L 482.9,118.7 L 566.4,106.5 L 650.0,113.0" stroke="#2980B9" stroke-width="2.5" fill="none" stroke-dasharray="6,3"/><circle cx="148.6" cy="99.9" r="3.5" fill="#E74C3C" stroke="white" stroke-width="1.5"/><text x="148.6" y="91" text-anchor="middle" font-size="9" fill="#E74C3C" font-weight="bold">338원</text><circle cx="232.1" cy="48.7" r="3.5" fill="#E74C3C" stroke="white" stroke-width="1.5"/><text x="232.1" y="40" text-anchor="middle" font-size="9" fill="#E74C3C" font-weight="bold">549원</text><circle cx="315.7" cy="61.1" r="3.5" fill="#E74C3C" stroke="white" stroke-width="1.5"/><text x="315.7" y="52" text-anchor="middle" font-size="9" fill="#E74C3C" font-weight="bold">498원</text><circle cx="399.3" cy="162.1" r="3.5" fill="#E74C3C" stroke="white" stroke-width="1.5"/><text x="399.3" y="153" text-anchor="middle" font-size="9" fill="#E74C3C" font-weight="bold">82원</text><circle cx="482.9" cy="174.7" r="3.5" fill="#E74C3C" stroke="white" stroke-width="1.5"/><text x="482.9" y="166" text-anchor="middle" font-size="9" fill="#E74C3C" font-weight="bold">30원</text><circle cx="566.4" cy="173.7" r="3.5" fill="#E74C3C" stroke="white" stroke-width="1.5"/><text x="566.4" y="165" text-anchor="middle" font-size="9" fill="#E74C3C" font-weight="bold">34원</text><circle cx="650.0" cy="169.4" r="3.5" fill="#E74C3C" stroke="white" stroke-width="1.5"/><text x="650.0" y="160" text-anchor="middle" font-size="9" fill="#E74C3C" font-weight="bold">52원</text><circle cx="65.0" cy="152.2" r="3.5" fill="#2980B9" stroke="white" stroke-width="1.5"/><text x="65.0" y="143" text-anchor="middle" font-size="9" fill="#2980B9" font-weight="bold">237건</text><circle cx="148.6" cy="123.3" r="3.5" fill="#2980B9" stroke="white" stroke-width="1.5"/><text x="148.6" y="114" text-anchor="middle" font-size="9" fill="#2980B9" font-weight="bold">467건</text><circle cx="232.1" cy="119.3" r="3.5" fill="#2980B9" stroke="white" stroke-width="1.5"/><text x="232.1" y="110" text-anchor="middle" font-size="9" fill="#2980B9" font-weight="bold">499건</text><circle cx="315.7" cy="48.7" r="3.5" fill="#2980B9" stroke="white" stroke-width="1.5"/><text x="315.7" y="40" text-anchor="middle" font-size="9" fill="#2980B9" font-weight="bold">1061건</text><circle cx="399.3" cy="120.5" r="3.5" fill="#2980B9" stroke="white" stroke-width="1.5"/><text x="399.3" y="112" text-anchor="middle" font-size="9" fill="#2980B9" font-weight="bold">489건</text><circle cx="482.9" cy="118.7" r="3.5" fill="#2980B9" stroke="white" stroke-width="1.5"/><text x="482.9" y="110" text-anchor="middle" font-size="9" fill="#2980B9" font-weight="bold">504건</text><circle cx="566.4" cy="106.5" r="3.5" fill="#2980B9" stroke="white" stroke-width="1.5"/><text x="566.4" y="97" text-anchor="middle" font-size="9" fill="#2980B9" font-weight="bold">601건</text><circle cx="650.0" cy="113.0" r="3.5" fill="#2980B9" stroke="white" stroke-width="1.5"/><text x="650.0" y="104" text-anchor="middle" font-size="9" fill="#2980B9" font-weight="bold">549건</text><text x="65.0" y="214" text-anchor="middle" font-size="9" fill="#888">03-31</text><text x="148.6" y="214" text-anchor="middle" font-size="9" fill="#888">04-01</text><text x="232.1" y="214" text-anchor="middle" font-size="9" fill="#888">04-02</text><text x="315.7" y="214" text-anchor="middle" font-size="9" fill="#888">04-03</text><text x="399.3" y="214" text-anchor="middle" font-size="9" fill="#888">04-04</text><text x="482.9" y="214" text-anchor="middle" font-size="9" fill="#888">04-05</text><text x="566.4" y="214" text-anchor="middle" font-size="9" fill="#888">04-06</text><text x="650.0" y="214" text-anchor="middle" font-size="9" fill="#888">04-07</text><rect x="65" y="4" width="12" height="5" fill="#E74C3C" rx="2"/><text x="81" y="12" font-size="10" fill="#444">CPV(원)</text><rect x="137" y="4" width="12" height="5" fill="#2980B9" rx="2" opacity="0.7"/><text x="153" y="12" font-size="10" fill="#444">자사몰 세션 (우측 축)</text></svg></div>
+    <p style="font-size:11px;color:var(--gray);margin-top:8px">실선=CPV(좌축) / 점선=자사몰 세션(우축). 3/31·광고 미집행일은 CPV 없음.</p>
+  </div>
+  <h2 class="section-title">📊 ThruPlay & ROAS 추이</h2>
+  <div class="card">
+    <div class="chart-wrap"><svg width="100%" viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg"><rect width="700" height="220" fill="#FAFAFA" rx="6"/><text x="60" y="186" text-anchor="end" font-size="9" fill="#999">0</text><line x1="65" y1="182" x2="650" y2="182" stroke="#E8E8E8" stroke-width="1"/><text x="60" y="146" text-anchor="end" font-size="9" fill="#999">3,319</text><line x1="65" y1="142" x2="650" y2="142" stroke="#E8E8E8" stroke-width="1"/><text x="60" y="106" text-anchor="end" font-size="9" fill="#999">6,638</text><line x1="65" y1="102" x2="650" y2="102" stroke="#E8E8E8" stroke-width="1"/><text x="60" y="66" text-anchor="end" font-size="9" fill="#999">9,957</text><line x1="65" y1="62" x2="650" y2="62" stroke="#E8E8E8" stroke-width="1"/><text x="60" y="26" text-anchor="end" font-size="9" fill="#999">13,276</text><line x1="65" y1="22" x2="650" y2="22" stroke="#E8E8E8" stroke-width="1"/><text x="654" y="186" font-size="9" fill="#999">0%</text><text x="654" y="146" font-size="9" fill="#999">143%</text><text x="654" y="106" font-size="9" fill="#999">287%</text><text x="654" y="66" font-size="9" fill="#999">430%</text><text x="654" y="26" font-size="9" fill="#999">573%</text><path d="M 65.0,182.0 L 148.6,180.7 L 232.1,179.5 L 315.7,171.3 L 399.3,142.1 L 482.9,48.7 L 566.4,100.3 L 650.0,156.9" stroke="#27AE60" stroke-width="2.5" fill="none"/><path d="M 148.6,182.0 L 232.1,48.7 L 315.7,172.9 L 399.3,164.7 L 482.9,182.0 L 566.4,85.5 L 650.0,159.2" stroke="#F39C12" stroke-width="2.5" fill="none" stroke-dasharray="6,3"/><circle cx="65.0" cy="182.0" r="3.5" fill="#27AE60" stroke="white" stroke-width="1.5"/><text x="65.0" y="173" text-anchor="middle" font-size="9" fill="#27AE60" font-weight="bold">0</text><circle cx="148.6" cy="180.7" r="3.5" fill="#27AE60" stroke="white" stroke-width="1.5"/><text x="148.6" y="172" text-anchor="middle" font-size="9" fill="#27AE60" font-weight="bold">111</text><circle cx="232.1" cy="179.5" r="3.5" fill="#27AE60" stroke="white" stroke-width="1.5"/><text x="232.1" y="170" text-anchor="middle" font-size="9" fill="#27AE60" font-weight="bold">208</text><circle cx="315.7" cy="171.3" r="3.5" fill="#27AE60" stroke="white" stroke-width="1.5"/><text x="315.7" y="162" text-anchor="middle" font-size="9" fill="#27AE60" font-weight="bold">886</text><circle cx="399.3" cy="142.1" r="3.5" fill="#27AE60" stroke="white" stroke-width="1.5"/><text x="399.3" y="133" text-anchor="middle" font-size="9" fill="#27AE60" font-weight="bold">3,312</text><circle cx="482.9" cy="48.7" r="3.5" fill="#27AE60" stroke="white" stroke-width="1.5"/><text x="482.9" y="40" text-anchor="middle" font-size="9" fill="#27AE60" font-weight="bold">11,064</text><circle cx="566.4" cy="100.3" r="3.5" fill="#27AE60" stroke="white" stroke-width="1.5"/><text x="566.4" y="91" text-anchor="middle" font-size="9" fill="#27AE60" font-weight="bold">6,776</text><circle cx="650.0" cy="156.9" r="3.5" fill="#27AE60" stroke="white" stroke-width="1.5"/><text x="650.0" y="148" text-anchor="middle" font-size="9" fill="#27AE60" font-weight="bold">2,085</text><circle cx="148.6" cy="182.0" r="3.5" fill="#F39C12" stroke="white" stroke-width="1.5"/><text x="148.6" y="173" text-anchor="middle" font-size="9" fill="#F39C12" font-weight="bold">0%</text><circle cx="232.1" cy="48.7" r="3.5" fill="#F39C12" stroke="white" stroke-width="1.5"/><text x="232.1" y="40" text-anchor="middle" font-size="9" fill="#F39C12" font-weight="bold">478%</text><circle cx="315.7" cy="172.9" r="3.5" fill="#F39C12" stroke="white" stroke-width="1.5"/><text x="315.7" y="164" text-anchor="middle" font-size="9" fill="#F39C12" font-weight="bold">33%</text><circle cx="399.3" cy="164.7" r="3.5" fill="#F39C12" stroke="white" stroke-width="1.5"/><text x="399.3" y="156" text-anchor="middle" font-size="9" fill="#F39C12" font-weight="bold">62%</text><circle cx="482.9" cy="182.0" r="3.5" fill="#F39C12" stroke="white" stroke-width="1.5"/><text x="482.9" y="173" text-anchor="middle" font-size="9" fill="#F39C12" font-weight="bold">0%</text><circle cx="566.4" cy="85.5" r="3.5" fill="#F39C12" stroke="white" stroke-width="1.5"/><text x="566.4" y="77" text-anchor="middle" font-size="9" fill="#F39C12" font-weight="bold">346%</text><circle cx="650.0" cy="159.2" r="3.5" fill="#F39C12" stroke="white" stroke-width="1.5"/><text x="650.0" y="150" text-anchor="middle" font-size="9" fill="#F39C12" font-weight="bold">82%</text><text x="65.0" y="214" text-anchor="middle" font-size="9" fill="#888">03-31</text><text x="148.6" y="214" text-anchor="middle" font-size="9" fill="#888">04-01</text><text x="232.1" y="214" text-anchor="middle" font-size="9" fill="#888">04-02</text><text x="315.7" y="214" text-anchor="middle" font-size="9" fill="#888">04-03</text><text x="399.3" y="214" text-anchor="middle" font-size="9" fill="#888">04-04</text><text x="482.9" y="214" text-anchor="middle" font-size="9" fill="#888">04-05</text><text x="566.4" y="214" text-anchor="middle" font-size="9" fill="#888">04-06</text><text x="650.0" y="214" text-anchor="middle" font-size="9" fill="#888">04-07</text><rect x="65" y="4" width="12" height="5" fill="#27AE60" rx="2"/><text x="81" y="12" font-size="10" fill="#444">ThruPlay(회)</text><rect x="172" y="4" width="12" height="5" fill="#F39C12" rx="2" opacity="0.7"/><text x="188" y="12" font-size="10" fill="#444">ROAS(%) (우측 축)</text></svg></div>
+    <p style="font-size:11px;color:var(--gray);margin-top:8px">실선=ThruPlay(좌축) / 점선=ROAS %(우축). 04-01·04-05: 수익 미집계(ROAS 없음).</p>
+  </div>
+  <h2 class="section-title">📋 일별 상세 수치</h2>
+  <div class="card">
+    <table>
+      <thead><tr>
+        <th data-sort="text">날짜</th><th data-sort="num">비용(원)</th>
+        <th data-sort="num">ThruPlay</th><th data-sort="num">CPV(원)</th>
+        <th data-sort="num">자사몰 세션</th><th data-sort="num">결제 시도</th>
+        <th data-sort="num">전자상거래 구매</th><th data-sort="num">총 구매 수익</th>
+        <th data-sort="num">ROAS(%)</th>
+      </tr></thead>
+      <tbody><tr><td class="text">03-31</td><td class="num">0</td><td class="num">0</td><td class="num"><b>—</b></td><td class="num">237</td><td class="num">201</td><td class="num">112</td><td class="num">3,327,310</td><td class="num">—</td></tr><tr><td class="text">04-01</td><td class="num">37,509</td><td class="num">111</td><td class="num"><b>338</b></td><td class="num">467</td><td class="num">54</td><td class="num">0</td><td class="num">0</td><td class="num">—</td></tr><tr><td class="text">04-02</td><td class="num">114,113</td><td class="num">208</td><td class="num"><b>549</b></td><td class="num">499</td><td class="num">44</td><td class="num">16</td><td class="num">545,080</td><td class="num">477.7%</td></tr><tr><td class="text">04-03</td><td class="num">441,154</td><td class="num">886</td><td class="num"><b>498</b></td><td class="num">1,061</td><td class="num">8</td><td class="num">3</td><td class="num">144,230</td><td class="num">32.7%</td></tr><tr><td class="text">04-04</td><td class="num">272,678</td><td class="num">3,312</td><td class="num"><b>82</b></td><td class="num">489</td><td class="num">11</td><td class="num">4</td><td class="num">169,230</td><td class="num">62.1%</td></tr><tr><td class="text">04-05</td><td class="num">328,870</td><td class="num">11,064</td><td class="num"><b>30</b></td><td class="num">504</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">—</td></tr><tr><td class="text">04-06</td><td class="num">231,675</td><td class="num">6,776</td><td class="num"><b>34</b></td><td class="num">601</td><td class="num">23</td><td class="num">9</td><td class="num">800,980</td><td class="num">345.7%</td></tr><tr style="background:var(--yellow-bg)!important"><td class="text">04-07 📍</td><td class="num">108,621</td><td class="num">2,085</td><td class="num"><b>52</b></td><td class="num">549</td><td class="num">18</td><td class="num">2</td><td class="num">88,800</td><td class="num">81.8%</td></tr></tbody></table></div>
+</section>
+<section id="t-seeding" class="tab-content">
+  <p style="font-size:12px;color:var(--gray);margin-bottom:14px">
+    📅 집계 기간: 2026-03-08 ~ 2026-04-07 &nbsp;|&nbsp;
+    🏆 성과 기준: ThruPlay(시청완료) 내림차순 &nbsp;|&nbsp;
+    <span style="color:#E1306C">📸 인플루언서 ID 클릭 → Instagram 프로필 이동</span>
+  </p>
+
+  <div class="product-header" style="background:linear-gradient(135deg,#2C3E50,#4A235A)">🧴 엑소밤 시딩 영상 TOP 5</div>
+  <div class="card" style="border-radius:0 0 8px 8px;margin-top:0;padding-top:10px">
+    <table><thead><tr>
+  <th style="width:36px">순위</th>
+  <th>인플루언서 ID (클릭→Instagram)</th>
+  <th data-sort="num">ThruPlay</th>
+  <th data-sort="num">노출</th>
+  <th data-sort="num">클릭</th>
+  <th data-sort="num">CTR</th>
+  <th data-sort="num">비용(원)</th>
+  <th data-sort="num">CPV(원)</th>
+  <th>캠페인</th>
+</tr></thead><tbody><tr>
+          <td class="center">🥇</td>
+          <td class="text"><a href="https://www.instagram.com/iffyssi/" target="_blank" rel="noopener" class="ig-link">@iffyssi</a></td>
+          <td class="num"><b>443</b></td>
+          <td class="num">6,381</td>
+          <td class="num">93</td>
+          <td class="num">1.46%</td>
+          <td class="num">458,630</td>
+          <td class="num">1,035원</td>
+          <td class="center"><span class="camp-badge conv">CONV</span></td>
+        </tr><tr>
+          <td class="center">🥈</td>
+          <td class="text"><a href="https://www.instagram.com/foryoufrom_j/" target="_blank" rel="noopener" class="ig-link">@foryoufrom_j</a></td>
+          <td class="num"><b>10</b></td>
+          <td class="num">897</td>
+          <td class="num">8</td>
+          <td class="num">0.89%</td>
+          <td class="num">10,435</td>
+          <td class="num">1,044원</td>
+          <td class="center"><span class="camp-badge conv">CONV</span></td>
+        </tr><tr>
+          <td class="center">🥉</td>
+          <td class="text"><a href="https://www.instagram.com/cherish___su/" target="_blank" rel="noopener" class="ig-link">@cherish___su</a></td>
+          <td class="num"><b>8</b></td>
+          <td class="num">257</td>
+          <td class="num">2</td>
+          <td class="num">0.78%</td>
+          <td class="num">8,519</td>
+          <td class="num">1,065원</td>
+          <td class="center"><span class="camp-badge conv">CONV</span></td>
+        </tr><tr>
+          <td class="center">4위</td>
+          <td class="text"><a href="https://www.instagram.com/rudaya_nolja/" target="_blank" rel="noopener" class="ig-link">@rudaya_nolja</a></td>
+          <td class="num"><b>4</b></td>
+          <td class="num">35</td>
+          <td class="num">3</td>
+          <td class="num">8.57%</td>
+          <td class="num">625</td>
+          <td class="num">156원</td>
+          <td class="center"><span class="camp-badge traf">TRAF</span></td>
+        </tr><tr>
+          <td class="center">5위</td>
+          <td class="text"><a href="https://www.instagram.com/berryzzin/" target="_blank" rel="noopener" class="ig-link">@berryzzin</a></td>
+          <td class="num"><b>4</b></td>
+          <td class="num">16</td>
+          <td class="num">0</td>
+          <td class="num">0.00%</td>
+          <td class="num">110</td>
+          <td class="num">28원</td>
+          <td class="center"><span class="camp-badge traf">TRAF</span></td>
+        </tr></tbody></table>
+  </div>
+
+  <div class="product-header" style="background:linear-gradient(135deg,#1A5276,#2E86C1)">💧 앰플 시딩 영상 TOP 5</div>
+  <div class="card" style="border-radius:0 0 8px 8px;margin-top:0;padding-top:10px">
+    <table><thead><tr>
+  <th style="width:36px">순위</th>
+  <th>인플루언서 ID (클릭→Instagram)</th>
+  <th data-sort="num">ThruPlay</th>
+  <th data-sort="num">노출</th>
+  <th data-sort="num">클릭</th>
+  <th data-sort="num">CTR</th>
+  <th data-sort="num">비용(원)</th>
+  <th data-sort="num">CPV(원)</th>
+  <th>캠페인</th>
+</tr></thead><tbody><tr>
+          <td class="center">🥇</td>
+          <td class="text"><a href="https://www.instagram.com/bomin._.04/" target="_blank" rel="noopener" class="ig-link">@bomin._.04</a></td>
+          <td class="num"><b>375</b></td>
+          <td class="num">13,485</td>
+          <td class="num">52</td>
+          <td class="num">0.39%</td>
+          <td class="num">174,877</td>
+          <td class="num">466원</td>
+          <td class="center"><span class="camp-badge conv">CONV</span></td>
+        </tr><tr>
+          <td class="center">🥈</td>
+          <td class="text"><a href="https://www.instagram.com/jae_hyun_22/" target="_blank" rel="noopener" class="ig-link">@jae_hyun_22</a></td>
+          <td class="num"><b>116</b></td>
+          <td class="num">699</td>
+          <td class="num">54</td>
+          <td class="num">7.73%</td>
+          <td class="num">41,096</td>
+          <td class="num">354원</td>
+          <td class="center"><span class="camp-badge conv">CONV</span></td>
+        </tr><tr>
+          <td class="center">🥉</td>
+          <td class="text"><a href="https://www.instagram.com/___minkkong/" target="_blank" rel="noopener" class="ig-link">@___minkkong</a></td>
+          <td class="num"><b>9</b></td>
+          <td class="num">22</td>
+          <td class="num">0</td>
+          <td class="num">0.00%</td>
+          <td class="num">248</td>
+          <td class="num">28원</td>
+          <td class="center"><span class="camp-badge traf">TRAF</span></td>
+        </tr><tr>
+          <td class="center">4위</td>
+          <td class="text"><a href="https://www.instagram.com/atozbibi/" target="_blank" rel="noopener" class="ig-link">@atozbibi</a></td>
+          <td class="num"><b>4</b></td>
+          <td class="num">57</td>
+          <td class="num">3</td>
+          <td class="num">5.26%</td>
+          <td class="num">587</td>
+          <td class="num">147원</td>
+          <td class="center"><span class="camp-badge traf">TRAF</span></td>
+        </tr><tr>
+          <td class="center">5위</td>
+          <td class="text"><a href="https://www.instagram.com/xyoobu/" target="_blank" rel="noopener" class="ig-link">@xyoobu</a></td>
+          <td class="num"><b>1</b></td>
+          <td class="num">31</td>
+          <td class="num">0</td>
+          <td class="num">0.00%</td>
+          <td class="num">426</td>
+          <td class="num">426원</td>
+          <td class="center"><span class="camp-badge traf">TRAF</span></td>
+        </tr></tbody></table>
+  </div>
+
+  <div class="product-header" style="background:linear-gradient(135deg,#145A32,#1D8348)">🎁 세트 시딩 영상 TOP 5</div>
+  <div class="card" style="border-radius:0 0 8px 8px;margin-top:0;padding-top:10px">
+    <table><thead><tr>
+  <th style="width:36px">순위</th>
+  <th>인플루언서 ID (클릭→Instagram)</th>
+  <th data-sort="num">ThruPlay</th>
+  <th data-sort="num">노출</th>
+  <th data-sort="num">클릭</th>
+  <th data-sort="num">CTR</th>
+  <th data-sort="num">비용(원)</th>
+  <th data-sort="num">CPV(원)</th>
+  <th>캠페인</th>
+</tr></thead><tbody><tr>
+          <td class="center">🥇</td>
+          <td class="text"><a href="https://www.instagram.com/buginezip/" target="_blank" rel="noopener" class="ig-link">@buginezip</a></td>
+          <td class="num"><b>22,938</b></td>
+          <td class="num">32,129</td>
+          <td class="num">1,091</td>
+          <td class="num">3.40%</td>
+          <td class="num">339,098</td>
+          <td class="num">15원</td>
+          <td class="center"><span class="camp-badge traf">TRAF</span></td>
+        </tr><tr>
+          <td class="center">🥈</td>
+          <td class="text"><a href="https://www.instagram.com/hwangdog_daily/" target="_blank" rel="noopener" class="ig-link">@hwangdog_daily</a></td>
+          <td class="num"><b>295</b></td>
+          <td class="num">1,243</td>
+          <td class="num">41</td>
+          <td class="num">3.30%</td>
+          <td class="num">15,186</td>
+          <td class="num">51원</td>
+          <td class="center"><span class="camp-badge traf">TRAF</span></td>
+        </tr><tr>
+          <td class="center">🥉</td>
+          <td class="text"><a href="https://www.instagram.com/illlikeus2/" target="_blank" rel="noopener" class="ig-link">@illlikeus2</a></td>
+          <td class="num"><b>133</b></td>
+          <td class="num">2,403</td>
+          <td class="num">54</td>
+          <td class="num">2.25%</td>
+          <td class="num">47,377</td>
+          <td class="num">356원</td>
+          <td class="center"><span class="camp-badge conv">CONV</span></td>
+        </tr><tr>
+          <td class="center">4위</td>
+          <td class="text"><a href="https://www.instagram.com/beautyr_yul/" target="_blank" rel="noopener" class="ig-link">@beautyr_yul</a></td>
+          <td class="num"><b>74</b></td>
+          <td class="num">1,422</td>
+          <td class="num">35</td>
+          <td class="num">2.46%</td>
+          <td class="num">109,775</td>
+          <td class="num">1,483원</td>
+          <td class="center"><span class="camp-badge conv">CONV</span></td>
+        </tr><tr>
+          <td class="center">5위</td>
+          <td class="text"><a href="https://www.instagram.com/0a.0919/" target="_blank" rel="noopener" class="ig-link">@0a.0919</a></td>
+          <td class="num"><b>11</b></td>
+          <td class="num">33</td>
+          <td class="num">1</td>
+          <td class="num">3.03%</td>
+          <td class="num">416</td>
+          <td class="num">38원</td>
+          <td class="center"><span class="camp-badge traf">TRAF</span></td>
+        </tr></tbody></table>
+  </div>
+
+  <div class="card" style="background:var(--yellow-bg);border:1px solid #E59866">
+    <b style="font-size:12px;color:#7D6608">💡 시딩 영상 핵심 인사이트</b>
+    <ul style="font-size:12px;color:#7D6608;margin-top:6px;padding-left:18px;line-height:1.9">
+      <li><b>세트 @buginezip</b>: ThruPlay 22,938회·CPV 15원으로 전체 압도적 1위. traf 캠페인 최적화 바이럴 소재.</li>
+      <li><b>앰플 @jae_hyun_22</b>: CTR 7.73%로 앰플 시딩 중 클릭 유도력 1위. 랜딩 강화 시 구매 전환 기대.</li>
+      <li><b>엑소밤 @rudaya_nolja</b>: 소예산(625원)에 CTR 8.57% 달성. 저비용 고효율 소재로 스케일업 가능.</li>
+      <li><b>전환 연결 이슈</b>: 모든 시딩 소재 Meta 전환 0건. Meta 픽셀 ↔ GA4 연동 점검 긴급 필요.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="t-summary" class="tab-content">
+  <h2 class="section-title">📊 전체 지표 기간 비교 (04-07 vs 04-06)</h2>
+  <div class="card"><table>
+    <thead><tr>
+      <th data-sort="text">지표</th><th data-sort="num">비교(04-06)</th>
+      <th data-sort="num">현재(04-07)</th><th data-sort="num">변화량</th><th data-sort="num">변화율</th>
+    </tr></thead>
+    <tbody><tr><td class="text"><b>비용</b></td><td class="num">231,675</td><td class="num">108,621</td><td class="num positive">-123,054</td><td class="num positive">-53.1%</td></tr><tr><td class="text"><b>노출</b></td><td class="num">10,206</td><td class="num">3,412</td><td class="num negative">-6,794</td><td class="num negative">-66.6%</td></tr><tr><td class="text"><b>클릭</b></td><td class="num">352</td><td class="num">203</td><td class="num negative">-149</td><td class="num negative">-42.3%</td></tr><tr><td class="text"><b>ThruPlay</b></td><td class="num">6,776</td><td class="num">2,085</td><td class="num negative">-4,691</td><td class="num negative">-69.2%</td></tr><tr><td class="text"><b>결제 시도</b></td><td class="num">23</td><td class="num">18</td><td class="num negative">-5</td><td class="num negative">-21.7%</td></tr><tr><td class="text"><b>전자상거래 구매</b></td><td class="num">9</td><td class="num">2</td><td class="num negative">-7</td><td class="num negative">-77.8%</td></tr><tr><td class="text"><b>총 구매 수익</b></td><td class="num">800,980</td><td class="num">88,800</td><td class="num negative">-712,180</td><td class="num negative">-88.9%</td></tr></tbody>
+  </table></div>
+</section>
+
+<section id="t-media" class="tab-content">
+  <h2 class="section-title">📡 매체별 성과 (2026-04-07)</h2>
+  <div class="card"><table>
+    <thead><tr><th data-sort="text">공급사</th><th data-sort="num">비용</th><th data-sort="num">노출</th><th data-sort="num">클릭</th><th data-sort="num">CTR</th><th data-sort="num">CPC</th><th data-sort="num">ThruPlay</th><th data-sort="num">결제 시도</th><th data-sort="num">전자상거래 구매</th><th data-sort="num">총 구매 수익</th><th data-sort="num">ROAS</th></tr></thead>
+    <tbody><tr><td class="text"><b>Google</b></td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0.00%</td><td class="num">0</td><td class="num">0</td><td class="num">18</td><td class="num">2</td><td class="num">88,800</td><td class="num">N/A</td></tr><tr><td class="text"><b>Meta</b></td><td class="num">108,621</td><td class="num">3,412</td><td class="num">203</td><td class="num">5.95%</td><td class="num">535</td><td class="num">2,085</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0.0%</td></tr><tr class="total-row"><td class="text"><b>합계</b></td><td class="num">108,621</td><td class="num">3,412</td><td class="num">203</td><td class="num">5.95%</td><td class="num">535</td><td class="num">2,085</td><td class="num">18</td><td class="num">2</td><td class="num">88,800</td><td class="num">81.8%</td></tr></tbody>
+  </table>
+  <p style="font-size:11px;color:var(--gray)">※ Google은 GA4 Organic. Meta가 유일한 유료 광고 채널.</p></div>
+</section>
+
+<section id="t-campaign" class="tab-content">
+  <h2 class="section-title">🎯 캠페인별 성과 (2026-04-07)</h2>
+  <div class="card"><table>
+    <thead><tr><th data-sort="text">공급사</th><th data-sort="text">캠페인</th><th data-sort="num">비용</th><th data-sort="num">노출</th><th data-sort="num">클릭</th><th data-sort="num">CTR</th><th data-sort="num">CPC</th><th data-sort="num">ThruPlay</th><th data-sort="num">결제 시도</th><th data-sort="num">전자상거래 구매</th></tr></thead>
+    <tbody><tr><td class="text">Meta</td><td class="text">conv_2604</td><td class="num">58,878</td><td class="num">1,114</td><td class="num">24</td><td class="num">2.15%</td><td class="num">2,453</td><td class="num">29</td><td class="num">0</td><td class="num">0</td></tr><tr><td class="text">Meta</td><td class="text">traf_2604</td><td class="num">49,743</td><td class="num">2,298</td><td class="num">179</td><td class="num">7.79%</td><td class="num">278</td><td class="num">2,056</td><td class="num">0</td><td class="num">0</td></tr><tr><td class="text">Google</td><td class="text">organic</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">N/A</td><td class="num">N/A</td><td class="num">0</td><td class="num">18</td><td class="num">2</td></tr></tbody>
+  </table></div>
+</section>
+
+<section id="t-daily" class="tab-content">
+  <h2 class="section-title">📅 일별 추이 (2026-03-31 ~ 2026-04-07)</h2>
+  <div class="card"><table>
+    <thead><tr><th data-sort="text">날짜</th><th data-sort="num">비용</th><th data-sort="num">노출</th><th data-sort="num">클릭</th><th data-sort="num">ThruPlay</th><th data-sort="num">CPV(원)</th><th data-sort="num">자사몰 세션</th><th data-sort="num">결제 시도</th><th data-sort="num">구매</th><th data-sort="num">총 구매 수익</th><th data-sort="num">ROAS</th></tr></thead>
+    <tbody><tr><td class="text">03-31</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num"><b>—</b></td><td class="num">237</td><td class="num">201</td><td class="num">112</td><td class="num">3,327,310</td><td class="num">—</td></tr><tr><td class="text">04-01</td><td class="num">37,509</td><td class="num">1,204</td><td class="num">39</td><td class="num">111</td><td class="num"><b>338</b></td><td class="num">467</td><td class="num">54</td><td class="num">0</td><td class="num">0</td><td class="num">—</td></tr><tr><td class="text">04-02</td><td class="num">114,113</td><td class="num">8,452</td><td class="num">113</td><td class="num">208</td><td class="num"><b>549</b></td><td class="num">499</td><td class="num">44</td><td class="num">16</td><td class="num">545,080</td><td class="num">477.7%</td></tr><tr><td class="text">04-03</td><td class="num">441,154</td><td class="num">22,977</td><td class="num">209</td><td class="num">886</td><td class="num"><b>498</b></td><td class="num">1,061</td><td class="num">8</td><td class="num">3</td><td class="num">144,230</td><td class="num">32.7%</td></tr><tr><td class="text">04-04</td><td class="num">272,678</td><td class="num">9,620</td><td class="num">315</td><td class="num">3,312</td><td class="num"><b>82</b></td><td class="num">489</td><td class="num">11</td><td class="num">4</td><td class="num">169,230</td><td class="num">62.1%</td></tr><tr><td class="text">04-05</td><td class="num">328,870</td><td class="num">15,328</td><td class="num">415</td><td class="num">11,064</td><td class="num"><b>30</b></td><td class="num">504</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">—</td></tr><tr><td class="text">04-06</td><td class="num">231,675</td><td class="num">10,206</td><td class="num">352</td><td class="num">6,776</td><td class="num"><b>34</b></td><td class="num">601</td><td class="num">23</td><td class="num">9</td><td class="num">800,980</td><td class="num">345.7%</td></tr><tr style="background:var(--yellow-bg)!important"><td class="text">04-07 📍</td><td class="num">108,621</td><td class="num">3,412</td><td class="num">203</td><td class="num">2,085</td><td class="num"><b>52</b></td><td class="num">549</td><td class="num">18</td><td class="num">2</td><td class="num">88,800</td><td class="num">81.8%</td></tr></tbody>
+  </table>
+  <p style="font-size:11px;color:var(--gray)">※ 노란색=어제(04-07). CPV=Meta광고비÷ThruPlay. 자사몰 세션=GA4 기준.</p></div>
+</section>
+
+<section id="t-insight" class="tab-content">
+  <h2 class="section-title">💡 인사이트 & 액션 플랜</h2>
+  <div class="card">
+    <table>
+      <thead><tr>
+        <th style="width:75px">우선순위</th>
+        <th>액션 아이템</th>
+        <th>데이터 근거</th>
+      </tr></thead>
+      <tbody>
+        <tr class="priority-high">
+          <td class="center"><b>🔴 긴급</b></td>
+          <td class="text">Google Organic 전환 급감 — 사이트 랜딩·재고·UX 즉시 점검</td>
+          <td class="text" style="font-size:11px">전자상거래 구매 9→2건(-77.8%), 총 수익 800,980→88,800원(-88.9%). 무비용 오가닉 채널 급락은 광고 외 사이트 이슈 가능성.</td>
+        </tr>
+        <tr class="priority-high">
+          <td class="center"><b>🔴 긴급</b></td>
+          <td class="text">Meta 픽셀 ↔ GA4 전환 이벤트 연동 점검</td>
+          <td class="text" style="font-size:11px">시딩 소재 29개 전부 전환(구매) 0건. GA4에는 전자상거래 구매 발생 중. Meta 픽셀이 구매 이벤트를 수신 못하는 상태 의심.</td>
+        </tr>
+        <tr class="priority-mid">
+          <td class="center"><b>🟡 중요</b></td>
+          <td class="text">세트 @buginezip 예산 대폭 증액 — CPV 15원·ThruPlay 22,938회 압도적 효율</td>
+          <td class="text" style="font-size:11px">CPV 15원은 전체 시딩 평균(120원) 대비 8배 저렴. 예산 증액 시 대규모 노출 및 바이럴 확산 기대.</td>
+        </tr>
+        <tr class="priority-mid">
+          <td class="center"><b>🟡 중요</b></td>
+          <td class="text">Meta conv_2604 캠페인 소재 전면 교체 — traf 대비 CTR 3.6배 저조</td>
+          <td class="text" style="font-size:11px">conv CTR 2.16% vs traf CTR 7.79%. conv 예산 58,878원 집행에 ThruPlay 29회. 현재 conv 소재(주로 iffyssi, bomin)를 buginezip 등 검증 소재로 교체 검토.</td>
+        </tr>
+        <tr class="priority-low">
+          <td class="center"><b>🟢 일반</b></td>
+          <td class="text">CPV 개선 지속 모니터링 — 04-03(498원) → 04-07(52원) 90% 하락</td>
+          <td class="text" style="font-size:11px">ThruPlay 대폭 증가와 동시에 CPV 급락. buginezip 소재 투입 효과. 현재 traf 캠페인 소재 믹스 유지하면 CPV 30~50원대 안정화 가능.</td>
+        </tr>
+        <tr class="priority-low">
+          <td class="center"><b>🟢 일반</b></td>
+          <td class="text">앰플 @jae_hyun_22 랜딩 최적화 후 리타겟팅 연결</td>
+          <td class="text" style="font-size:11px">CTR 7.73%로 클릭 의향 높으나 구매 전환 0건. 소재 클릭 → 상세페이지 → 리타겟팅 광고 퍼널 구성 권장.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<script>
+document.querySelectorAll('.tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.target).classList.add('active');
+  });
+});
+document.querySelectorAll('th[data-sort]').forEach(th=>{
+  th.addEventListener('click',()=>{
+    const tbl=th.closest('table');
+    const tbody=tbl.querySelector('tbody');
+    if(!tbody)return;
+    const rows=Array.from(tbody.querySelectorAll('tr:not(.total-row)'));
+    const idx=th.cellIndex;
+    const isNum=th.dataset.sort==='num';
+    const asc=!th.classList.contains('sort-asc');
+    tbl.querySelectorAll('th').forEach(h=>h.classList.remove('sort-asc','sort-desc'));
+    th.classList.add(asc?'sort-asc':'sort-desc');
+    rows.sort((a,b)=>{
+      if(!a.cells[idx]||!b.cells[idx])return 0;
+      let va=a.cells[idx].textContent.replace(/[,원%건📍—🧴💧🎁]/g,'').replace(/[🥇🥈🥉]/g,'').trim();
+      let vb=b.cells[idx].textContent.replace(/[,원%건📍—🧴💧🎁]/g,'').replace(/[🥇🥈🥉]/g,'').trim();
+      if(isNum){va=parseFloat(va)||0;vb=parseFloat(vb)||0;}
+      return asc?(va>vb?1:-1):(va<vb?1:-1);
+    });
+    rows.forEach(r=>tbody.appendChild(r));
+  });
+});
+</script>
+</body>
+</html>
