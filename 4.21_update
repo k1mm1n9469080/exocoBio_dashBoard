@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>엑소코바이오 · 시딩 영상 대시보드</title>
+<style>
+:root{
+  --dark:#1a1a2e;--header:#16213e;--accent:#0f3460;--blue:#e94560;
+  --green:#27ae60;--green-bg:#eafaf1;--red:#e74c3c;--red-bg:#fdedec;
+  --yellow-bg:#fef9e7;--gray:#7f8c8d;--light:#f4f6f8;--white:#fff;
+  --border:#dde1e7;--blue-bg:#eaf0fb;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Pretendard','Apple SD Gothic Neo',Arial,sans-serif;background:#f0f2f7;color:#222;padding:20px}
+a{color:inherit;text-decoration:none}
+a:hover{text-decoration:underline}
+ 
+/* 헤더 */
+.page-header{background:var(--dark);color:#fff;border-radius:12px;padding:24px 28px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.page-header h1{font-size:22px;font-weight:700;letter-spacing:-0.5px}
+.page-header .meta{font-size:13px;color:#aab;display:flex;gap:12px;flex-wrap:wrap}
+.badge-live{background:var(--blue);color:#fff;font-size:11px;padding:3px 8px;border-radius:20px;font-weight:700;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+ 
+/* KPI 카드 */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:24px}
+.kpi-card{background:#fff;border-radius:10px;padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.kpi-card .label{font-size:12px;color:var(--gray);margin-bottom:6px}
+.kpi-card .value{font-size:24px;font-weight:700;color:var(--dark);letter-spacing:-1px}
+.kpi-card .sub{font-size:12px;color:var(--gray);margin-top:4px}
+ 
+/* 탭 */
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--dark);margin-bottom:20px;flex-wrap:wrap}
+.tab{padding:9px 18px;border:none;background:var(--light);cursor:pointer;font-size:13px;font-weight:600;color:var(--dark);border-radius:6px 6px 0 0;transition:background .2s}
+.tab.active{background:var(--dark);color:#fff}
+.tab:hover:not(.active){background:var(--border)}
+.tab-content{display:none}.tab-content.active{display:block}
+ 
+/* 섹션 */
+.section-title{font-size:17px;color:var(--dark);font-weight:700;margin:24px 0 12px;display:flex;align-items:center;gap:8px}
+.card{background:#fff;border-radius:10px;padding:20px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+ 
+/* 테이블 */
+table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:13px}
+th{background:var(--dark);color:#fff;padding:10px 12px;text-align:center;cursor:pointer;user-select:none;white-space:nowrap;position:relative}
+th:hover{background:var(--accent)}
+th::after{content:' ⇅';font-size:10px;opacity:.4}
+th.sort-asc::after{content:' ▲';opacity:1}
+th.sort-desc::after{content:' ▼';opacity:1}
+td{padding:8px 11px;border:1px solid var(--border);white-space:nowrap}
+tr:nth-child(even) td{background:var(--light)}
+tr:nth-child(odd) td{background:#fff}
+tr:hover td{background:var(--blue-bg)}
+tr.total-row td{background:var(--blue-bg);font-weight:700}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+td.text{text-align:left}
+td.center{text-align:center}
+.positive{color:var(--green);font-weight:700}
+.negative{color:var(--red);font-weight:700}
+.badge{padding:2px 7px;border-radius:4px;font-size:11px;font-weight:700}
+.badge-traf{background:#e8f4fd;color:#2980b9}
+.badge-org{background:#eafaf1;color:#27ae60}
+.rank-gold{color:#f39c12;font-weight:700}
+.rank-silver{color:#7f8c8d;font-weight:700}
+.rank-bronze{color:#cd7f32;font-weight:700}
+ 
+/* 전일 비교 */
+.compare-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:16px}
+.compare-card{background:#fff;border-radius:8px;padding:12px 14px;border:1px solid var(--border)}
+.compare-card .c-label{font-size:11px;color:var(--gray);margin-bottom:4px}
+.compare-card .c-val{font-size:18px;font-weight:700;color:var(--dark)}
+.compare-card .c-change{font-size:12px;margin-top:3px}
+ 
+/* 경고 박스 */
+.warn-box{background:#fff8e1;border:1px solid #ffe082;border-radius:8px;padding:14px 16px;margin-bottom:16px;font-size:13px}
+.warn-box strong{color:#e65100}
+ 
+/* 인사이트 */
+.insight-table tr.pri-high td{background:#fdedec}
+.insight-table tr.pri-mid td{background:#fef9e7}
+.insight-table tr.pri-low td{background:#eafaf1}
+ 
+/* 반응형 */
+@media(max-width:600px){
+  .kpi-grid{grid-template-columns:1fr 1fr}
+  table{font-size:11px}
+  td,th{padding:6px 7px}
+}
+</style>
+</head>
+<body>
+ 
+<div class="page-header">
+  <div>
+    <h1>엑소코바이오 · 시딩 영상 대시보드</h1>
+    <div class="meta">
+      <span>📅 2026.04.01 – 04.20</span>
+      <span>🔄 04-20 업데이트</span>
+      <span>📡 AEer API + Spray.ai CSV</span>
+    </div>
+  </div>
+  <span class="badge-live">LIVE DATA</span>
+</div>
+ 
+<!-- 탭 네비 -->
+<div class="tabs">
+  <button class="tab active" data-target="tab-kpi">총괄 KPI</button>
+  <button class="tab" data-target="tab-top">시딩 TOP · 제품별</button>
+  <button class="tab" data-target="tab-organic">오가닉 인게이지먼트</button>
+  <button class="tab" data-target="tab-daily">일별 추이</button>
+  <button class="tab" data-target="tab-insight">인사이트</button>
+</div>
+ 
+<!-- ══════════════ TAB 1: KPI ══════════════ -->
+<div id="tab-kpi" class="tab-content active">
+ 
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="label">총 Meta 광고비</div>
+      <div class="value">5,076,634원</div>
+      <div class="sub">04/01~04/20 전체</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">시딩 광고비</div>
+      <div class="value">972,845원</div>
+      <div class="sub">전체의 19.2%</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">Spray 총 조회수</div>
+      <div class="value">1,483,455회</div>
+      <div class="sub">오가닉+광고 합산</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">추정 오가닉 뷰</div>
+      <div class="value">1,402,999회</div>
+      <div class="sub">Spray − Meta 노출</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">총 ThruPlay</div>
+      <div class="value">40,212회</div>
+      <div class="sub">시딩 소재 Meta 시청완료</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">평균 CPV</div>
+      <div class="value">24원</div>
+      <div class="sub">시딩 광고비 ÷ ThruPlay</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">총 좋아요</div>
+      <div class="value">6,742개</div>
+      <div class="sub">Spray 기준</div>
+    </div>
+    <div class="kpi-card">
+      <div class="label">전체 ROAS</div>
+      <div class="value">60.3%</div>
+      <div class="sub">매출 3,063,715원</div>
+    </div>
+    <div class="kpi-card" style="border-left:4px solid var(--green)">
+      <div class="label">업로드 완료</div>
+      <div class="value">92명 / 100명</div>
+      <div class="sub">목표 대비 업로드율 92%</div>
+    </div>
+  </div>
+ 
+  <h2 class="section-title">📬 제품별 캠페인 현황</h2>
+  <div class="card">
+    <table>
+      <thead><tr>
+        <th data-sort="text">제품</th>
+        <th data-sort="num">DM 발송</th>
+        <th data-sort="num">계약</th>
+        <th data-sort="num">계약율</th>
+        <th data-sort="num">업로드</th>
+        <th data-sort="num">업로드율</th>
+        <th data-sort="num">미업로드</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td class="text">🎁 세트</td>
+          <td class="num">151</td>
+          <td class="num">32</td>
+          <td class="num">21.2%</td>
+          <td class="num">27</td>
+          <td class="num">84.4%</td>
+          <td class="num negative">5명</td>
+        </tr>
+        <tr>
+          <td class="text">💧 앰플</td>
+          <td class="num">137</td>
+          <td class="num">38</td>
+          <td class="num">27.7%</td>
+          <td class="num">32</td>
+          <td class="num">84.2%</td>
+          <td class="num negative">6명</td>
+        </tr>
+        <tr>
+          <td class="text">🧴 엑소밤</td>
+          <td class="num">125</td>
+          <td class="num">37</td>
+          <td class="num">29.6%</td>
+          <td class="num">33</td>
+          <td class="num">89.2%</td>
+          <td class="num negative">4명</td>
+        </tr>
+        <tr class="total-row">
+          <td class="text">합계</td>
+          <td class="num">413</td>
+          <td class="num">107</td>
+          <td class="num">25.9%</td>
+          <td class="num">92</td>
+          <td class="num">86.0%</td>
+          <td class="num negative">15명</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+ 
+  <h2 class="section-title">📊 제품별 요약</h2>
+  <div class="card">
+    <table>
+      <thead><tr>
+        <th data-sort="text">제품</th>
+        <th data-sort="num">광고비</th>
+        <th data-sort="num">ThruPlay</th>
+        <th data-sort="num">CPV</th>
+        <th data-sort="num">Spray 조회</th>
+        <th data-sort="num">오가닉 뷰</th>
+        <th data-sort="num">좋아요</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td class="text">🎁 세트</td>
+          <td class="num">551,095</td>
+          <td class="num">30,699</td>
+          <td class="num">18원</td>
+          <td class="num">432,717</td>
+          <td class="num">386,602</td>
+          <td class="num">1,930</td>
+        </tr>
+        <tr>
+          <td class="text">🧴 엑소밤</td>
+          <td class="num">78,258</td>
+          <td class="num">118</td>
+          <td class="num">663원</td>
+          <td class="num">409,661</td>
+          <td class="num">403,570</td>
+          <td class="num">1,868</td>
+        </tr>
+        <tr>
+          <td class="text">💧 앰플</td>
+          <td class="num">343,492</td>
+          <td class="num">9,395</td>
+          <td class="num">37원</td>
+          <td class="num">641,077</td>
+          <td class="num">609,090</td>
+          <td class="num">2,944</td>
+        </tr>
+        <tr class="total-row">
+          <td class="text">합계</td>
+          <td class="num">972,845</td>
+          <td class="num">40,212</td>
+          <td class="num">24원</td>
+          <td class="num">1,483,455</td>
+          <td class="num">1,399,262</td>
+          <td class="num">6,742</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+ 
+  <h2 class="section-title">⚡ 전일 비교 (04-19 vs 04-20)</h2>
+  <div class="card">
+    <div class="compare-grid">
+      <div class="compare-card">
+        <div class="c-label">비용</div>
+        <div class="c-val">1,764,984원</div>
+        <div class="c-change positive">+1,668,342 (+1,726.2%)</div>
+      </div>
+      <div class="compare-card">
+        <div class="c-label">노출</div>
+        <div class="c-val">694,844</div>
+        <div class="c-change positive">+689,658 (+13,291%)</div>
+      </div>
+      <div class="compare-card">
+        <div class="c-label">클릭</div>
+        <div class="c-val">1,555</div>
+        <div class="c-change positive">+1,480 (+1,973%)</div>
+      </div>
+      <div class="compare-card">
+        <div class="c-label">구매</div>
+        <div class="c-val">33건</div>
+        <div class="c-change positive">+33 (신규)</div>
+      </div>
+      <div class="compare-card">
+        <div class="c-label">매출</div>
+        <div class="c-val">2,037,995원</div>
+        <div class="c-change positive">+2,037,995 (신규)</div>
+      </div>
+      <div class="compare-card">
+        <div class="c-label">ThruPlay</div>
+        <div class="c-val">362회</div>
+        <div class="c-change negative">−132 (−26.7%)</div>
+      </div>
+      <div class="compare-card">
+        <div class="c-label">세션</div>
+        <div class="c-val">2,237</div>
+        <div class="c-change positive">+2,050 (+1,096%)</div>
+      </div>
+      <div class="compare-card">
+        <div class="c-label">ROAS (당일)</div>
+        <div class="c-val">115.5%</div>
+        <div class="c-change positive">+신규</div>
+      </div>
+    </div>
+    <p style="font-size:12px;color:var(--gray)">※ 04-20 대규모 예산 집행일 (런칭 프로모션). ThruPlay 감소는 노출 타겟 변경에 기인.</p>
+  </div>
+ 
+</div>
+ 
+<!-- ══════════════ TAB 2: 시딩 TOP ══════════════ -->
+<div id="tab-top" class="tab-content">
+  <p style="font-size:12px;color:var(--gray);margin-bottom:12px">📅 4/1~4/20 | 🏆 Spray 조회수 기준 | 클릭 시 영상 직접 이동</p>
+ 
+  <h2 class="section-title">🎁 세트 시딩 TOP</h2>
+  <div class="card">
+    <table>
+      <thead><tr>
+        <th style="width:40px">순위</th>
+        <th data-sort="text">인플루언서</th>
+        <th data-sort="num">Spray 조회</th>
+        <th data-sort="num">오가닉 뷰</th>
+        <th data-sort="num">좋아요</th>
+        <th data-sort="num">Ad 비용</th>
+        <th data-sort="num">ThruPlay</th>
+        <th data-sort="num">CPV</th>
+        <th data-sort="text">타입</th>
+      </tr></thead>
+      <tbody>
+        <tr><td class="center rank-gold">🥇</td><td class="text"><a href="https://www.instagram.com/buginezip" target="_blank">@buginezip</a></td><td class="num"><strong>140,935</strong></td><td class="num">100,237</td><td class="num">237</td><td class="num">492,249</td><td class="num">29,997</td><td class="num">16원</td><td class="center"><span class="badge badge-traf">TRAF</span></td></tr>
+        <tr><td class="center rank-silver">🥈</td><td class="text"><a href="https://www.instagram.com/jsol_glow" target="_blank">@jsol_glow</a></td><td class="num"><strong>101,198</strong></td><td class="num">101,198</td><td class="num">710</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="center"><span class="badge badge-org">ORG</span></td></tr>
+        <tr><td class="center rank-bronze">🥉</td><td class="text"><a href="https://www.instagram.com/hwangdog_daily" target="_blank">@hwangdog_daily</a></td><td class="num"><strong>57,377</strong></td><td class="num">55,580</td><td class="num">122</td><td class="num">26,180</td><td class="num">317</td><td class="num">83원</td><td class="center"><span class="badge badge-traf">TRAF</span></td></tr>
+        <tr><td class="center">4</td><td class="text"><a href="https://www.instagram.com/haelog.record" target="_blank">@haelog.record</a></td><td class="num"><strong>43,240</strong></td><td class="num">43,240</td><td class="num">340</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="center"><span class="badge badge-org">ORG</span></td></tr>
+        <tr><td class="center">5</td><td class="text"><a href="https://www.instagram.com/k_imbeauty" target="_blank">@k_imbeauty</a></td><td class="num"><strong>23,530</strong></td><td class="num">23,530</td><td class="num">263</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="center"><span class="badge badge-org">ORG</span></td></tr>
+        <tr><td class="center">6</td><td class="text"><a href="https://www.instagram.com/uhyeoniz" target="_blank">@uhyeoniz</a></td><td class="num"><strong>16,083</strong></td><td class="num">16,083</td><td class="num">0</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="center"><span class="badge badge-org">ORG</span></td></tr>
+        <tr><td class="center">7</td><td class="text"><a href="https://www.instagram.com/oonnimoments" target="_blank">@oonnimoments</a></td><td class="num"><strong>15,552</strong></td><td class="num">15,353</td><td class="num">0</td><td class="num">2,699</td><td class="num">4</td><td class="num">675원</td><td class="center"><span class="badge badge-traf">TRAF</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+ 
+  <h2 class="section-title">🧴 엑소밤 시딩 TOP</h2>
+  <div class="card">
+    <table>
+      <thead><tr>
+        <th style="width:40px">순위</th>
+        <th data-sort="text">인플루언서</th>
+        <th data-sort="num">Spray 조회</th>
+        <th data-sort="num">오가닉 뷰</th>
+        <th data-sort="num">좋아요</th>
+        <th data-sort="num">Ad 비용</th>
+        <th data-sort="num">ThruPlay</th>
+        <th data-sort="num">CPV</th>
+        <th data-sort="text">타입</th>
+      </tr></thead>
+      <tbody>
+        <tr><td class="center rank-gold">🥇</td><td class="text"><a href="https://www.instagram.com/quinnie121__" target="_blank">@quinnie121__</a></td><td class="num"><strong>116,415</strong></td><td class="num">116,415</td><td class="num">0</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="center"><span class="badge badge-org">ORG</span></td></tr>
+        <tr><td class="center rank-silver">🥈</td><td class="text"><a href="https://www.instagram.com/yoonji_1228" target="_blank">@yoonji_1228</a></td><td class="num"><strong>111,686</strong></td><td class="num">111,686</td><td class="num">717</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="center"><span class="badge badge-org">ORG</span></td></tr>
+        <tr><td class="center rank-bronze">🥉</td><td class="text"><a href="https://www.instagram.com/yonakeem" target="_blank">@yonakeem</a></td><td class="num"><strong>72,677</strong></td><td class="num">72,677</td><td class="num">0</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="center"><span class="badge badge-org">ORG</span></td></tr>
+        <tr><td class="center">4</td><td class="text"><a href="https://www.instagram.com/silver._.mouse._" target="_blank">@silver._.mouse._</a></td><td class="num"><strong>27,033</strong></td><td class="num">27,033</td><td class="num">264</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="center"><span class="badge badge-org">ORG</span></td></tr>
+        <tr><td class="center">5</td><td class="text"><a href="https://www.instagram.com/elly__glow" target="_blank">@elly__glow</a></td><td class="num"><strong>14,971</strong></td><td class="num">14,971</td><td class="num">213</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="center"><span class="badge badge-org">ORG</span></td></tr>
+        <tr><td class="center">6</td><td class="text"><a href="https://www.instagram.com/iffyssi" target="_blank">@iffyssi</a></td><td class="num"><strong>14,542</strong></td><td class="num">7,846</td><td class="num">57</td><td class="num">471,842</td><td class="num">464</td><td class="num">1,017원</td><td class="center"><span class="badge badge-traf">TRAF</span></td></tr>
+        <tr><td class="center">7</td><td class="text"><a href="https://www.instagram.com/rudaya_nolja" target="_blank">@rudaya_nolja</a></td><td class="num"><strong>10,324</strong></td><td class="num">10,289</td><td class="num">116</td><td class="num">13,002</td><td class="num">45</td><td class="num">289원</td><td class="center"><span class="badge badge-traf">TRAF</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+ 
+  <h2 class="section-title">💧 앰플 시딩 TOP</h2>
+  <div class="card">
+    <table>
+      <thead><tr>
+        <th style="width:40px">순위</th>
+        <th data-sort="text">인플루언서</th>
+        <th data-sort="num">Spray 조회</th>
+        <th data-sort="num">오가닉 뷰</th>
+        <th data-sort="num">좋아요</th>
+        <th data-sort="num">Ad 비용</th>
+        <th data-sort="num">ThruPlay</th>
+        <th data-sort="num">CPV</th>
+        <th data-sort="text">타입</th>
+      </tr></thead>
+      <tbody>
+        <tr><td class="center rank-gold">🥇</td><td class="text"><a href="https://www.instagram.com/eun.bloom_" target="_blank">@eun.bloom_</a></td><td class="num"><strong>108,268</strong></td><td class="num">108,140</td><td class="num">313</td><td class="num">1,513</td><td class="num">5</td><td class="num">303원</td><td class="center"><span class="badge badge-traf">TRAF</span></td></tr>
+        <tr><td class="center rank-silver">🥈</td><td class="text"><a href="https://www.instagram.com/__heute__" target="_blank">@__heute__</a></td><td class="num"><strong>102,784</strong></td><td class="num">102,784</td><td class="num">564</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="center"><span class="badge badge-org">ORG</span></td></tr>
+        <tr><td class="center rank-bronze">🥉</td><td class="text"><a href="https://www.instagram.com/dewybin" target="_blank">@dewybin</a></td><td class="num"><strong>92,755</strong></td><td class="num">92,755</td><td class="num">300</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="center"><span class="badge badge-org">ORG</span></td></tr>
+        <tr><td class="center">4</td><td class="text"><a href="https://www.instagram.com/___minkkong" target="_blank">@___minkkong</a></td><td class="num"><strong>86,848</strong></td><td class="num">86,034</td><td class="num">278</td><td class="num">6,948</td><td class="num">37</td><td class="num">188원</td><td class="center"><span class="badge badge-traf">TRAF</span></td></tr>
+        <tr><td class="center">5</td><td class="text"><a href="https://www.instagram.com/it_hee_" target="_blank">@it_hee_</a></td><td class="num"><strong>43,340</strong></td><td class="num">43,340</td><td class="num">0</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="center"><span class="badge badge-org">ORG</span></td></tr>
+        <tr><td class="center">6</td><td class="text"><a href="https://www.instagram.com/ddoa.review" target="_blank">@ddoa.review</a></td><td class="num"><strong>40,533</strong></td><td class="num">40,533</td><td class="num">0</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="center"><span class="badge badge-org">ORG</span></td></tr>
+        <tr><td class="center">7</td><td class="text"><a href="https://www.instagram.com/atozbibi" target="_blank">@atozbibi</a></td><td class="num"><strong>23,218</strong></td><td class="num">3,860</td><td class="num">62</td><td class="num">157,628</td><td class="num">8,783</td><td class="num">18원</td><td class="center"><span class="badge badge-traf">TRAF</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+ 
+  <div class="card" style="background:#f0f8ff;border:1px solid #b3d9ff">
+    <h3 style="font-size:14px;color:var(--dark);margin-bottom:10px">💡 시딩 핵심 인사이트</h3>
+    <ul style="padding-left:18px;font-size:13px;line-height:1.9">
+      <li><strong>@buginezip</strong> — Spray 14만+뷰, CPV 16원. 예산 증액 1순위.</li>
+      <li><strong>엑소밤 오가닉 폭발</strong> — @quinnie121__(116K), @yoonji_1228(112K), @yonakeem(73K). 모두 광고 미집행 상태. TRAF 투입 시 CPV 20원대 기대.</li>
+      <li><strong>@jsol_glow 신규 진입</strong> — 세트 2위(101K뷰), 순오가닉. 광고 투입 검토.</li>
+      <li><strong>@__heute__ 앰플 급성장</strong> — 102K뷰, 좋아요 564개. CONV 전환 적기.</li>
+      <li><strong>엑소밤 TRAF 비효율</strong> — @iffyssi CPV 1,017원. 소재 교체 검토.</li>
+    </ul>
+  </div>
+</div>
+ 
+<!-- ══════════════ TAB 3: 오가닉 ══════════════ -->
+<div id="tab-organic" class="tab-content">
+  <h2 class="section-title">🔥 전체 크리에이터 오가닉 인게이지먼트 (Spray 04-20 기준)</h2>
+  <div class="card">
+    <table id="organic-table">
+      <thead><tr>
+        <th data-sort="text">인플루언서</th>
+        <th data-sort="text">제품</th>
+        <th data-sort="num">팔로워</th>
+        <th data-sort="num">Spray 조회</th>
+        <th data-sort="num">좋아요</th>
+        <th data-sort="num">Ad 노출</th>
+        <th data-sort="num">오가닉 뷰</th>
+        <th data-sort="num">오가닉%</th>
+      </tr></thead>
+      <tbody id="organic-tbody"></tbody>
+    </table>
+  </div>
+</div>
+ 
+<!-- ══════════════ TAB 4: 일별 추이 ══════════════ -->
+<div id="tab-daily" class="tab-content">
+  <h2 class="section-title">📋 일별 상세 (전체 Meta)</h2>
+  <div class="card">
+    <table>
+      <thead><tr>
+        <th data-sort="text">날짜</th>
+        <th data-sort="num">비용</th>
+        <th data-sort="num">노출</th>
+        <th data-sort="num">클릭</th>
+        <th data-sort="num">ThruPlay</th>
+        <th data-sort="num">CPV</th>
+        <th data-sort="num">도달</th>
+        <th data-sort="num">세션</th>
+        <th data-sort="num">구매</th>
+        <th data-sort="num">구매수익</th>
+      </tr></thead>
+      <tbody id="daily-tbody"></tbody>
+    </table>
+    <p style="font-size:12px;color:var(--gray)">※ ThruPlay·도달·세션 = AEer API. 비용·노출·클릭·구매·수익 = AEer API. 4/21 데이터 미수집.</p>
+  </div>
+</div>
+ 
+<!-- ══════════════ TAB 5: 인사이트 ══════════════ -->
+<div id="tab-insight" class="tab-content">
+  <h2 class="section-title">🎯 인사이트 & 액션 플랜</h2>
+  <div class="card">
+    <table class="insight-table">
+      <thead><tr>
+        <th data-sort="text">우선순위</th>
+        <th data-sort="text">액션 아이템</th>
+        <th data-sort="text">데이터 근거</th>
+      </tr></thead>
+      <tbody>
+        <tr class="pri-high">
+          <td class="center">🔴 긴급</td>
+          <td class="text">오가닉 바이럴 엑소밤 소재 CONV/TRAF 투입</td>
+          <td class="text">@quinnie121__(116K), @yoonji_1228(112K), @yonakeem(73K). 광고 미집행 상태. 고급 매칭 설정 후 CONV 캠페인 투입 권장.</td>
+        </tr>
+        <tr class="pri-high">
+          <td class="center">🔴 긴급</td>
+          <td class="text">@jsol_glow 세트 소재 TRAF 투입</td>
+          <td class="text">101K뷰 순오가닉 2위. 팔로워 대비 조회수 비율 우수. CPV 20원대 예상.</td>
+        </tr>
+        <tr class="pri-high">
+          <td class="center">🔴 긴급</td>
+          <td class="text">@__heute__ 앰플 TRAF→CONV 전환</td>
+          <td class="text">102K뷰, 좋아요 564개(앰플 최다). 오가닉 100%. 현재 광고 미집행 → 즉시 투입.</td>
+        </tr>
+        <tr class="pri-mid">
+          <td class="center">🟡 중요</td>
+          <td class="text">@buginezip 예산 증액 + 리타겟팅 연결</td>
+          <td class="text">Spray 14만+뷰, CPV 16원. 세트 부문 최고 효율. TRAF→CONV 리타겟팅 퍼널 구성.</td>
+        </tr>
+        <tr class="pri-mid">
+          <td class="center">🟡 중요</td>
+          <td class="text">엑소밤 TRAF 비효율 소재 교체</td>
+          <td class="text">@iffyssi CPV 1,017원. @rozy_su CPV 907원. 오가닉 상위 소재로 교체 검토.</td>
+        </tr>
+        <tr class="pri-mid">
+          <td class="center">🟡 중요</td>
+          <td class="text">@atozbibi 앰플 TRAF 효율 확인</td>
+          <td class="text">CPV 18원으로 앰플 최저. Spray 23K뷰 중 오가닉 비율 17%로 낮음 → 예산 조정 필요.</td>
+        </tr>
+        <tr class="pri-low">
+          <td class="center">🟢 일반</td>
+          <td class="text">04-20 런칭 성과 모니터링</td>
+          <td class="text">04-20 대규모 집행(176만원). 구매 33건, 매출 204만원, ROAS 115.5%. 지속 여부 판단.</td>
+        </tr>
+        <tr class="pri-low">
+          <td class="center">🟢 일반</td>
+          <td class="text">Spray 트래킹 미연동 재확인</td>
+          <td class="text">업로드 완료했으나 조회수 0인 크리에이터 재연결 권고.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+ 
+<script>
+// ── 데이터 ──────────────────────────────────────────────────────
+const organicData = [
+  {u:'buginezip',prod:'🎁',f:24204,sv:140935,likes:237,ad:40698,ov:100237,url:'https://www.instagram.com/buginezip'},
+  {u:'jsol_glow',prod:'🎁',f:12000,sv:101198,likes:710,ad:0,ov:101198,url:'https://www.instagram.com/jsol_glow'},
+  {u:'quinnie121__',prod:'🧴',f:20609,sv:116415,likes:0,ad:0,ov:116415,url:'https://www.instagram.com/quinnie121__'},
+  {u:'yoonji_1228',prod:'🧴',f:15836,sv:111686,likes:717,ad:0,ov:111686,url:'https://www.instagram.com/yoonji_1228'},
+  {u:'eun.bloom_',prod:'💧',f:13274,sv:108268,likes:313,ad:128,ov:108140,url:'https://www.instagram.com/eun.bloom_'},
+  {u:'__heute__',prod:'💧',f:28870,sv:102784,likes:564,ad:0,ov:102784,url:'https://www.instagram.com/__heute__'},
+  {u:'dewybin',prod:'💧',f:10132,sv:92755,likes:300,ad:0,ov:92755,url:'https://www.instagram.com/dewybin'},
+  {u:'___minkkong',prod:'💧',f:15801,sv:86848,likes:278,ad:814,ov:86034,url:'https://www.instagram.com/___minkkong'},
+  {u:'yonakeem',prod:'🧴',f:9150,sv:72677,likes:0,ad:0,ov:72677,url:'https://www.instagram.com/yonakeem'},
+  {u:'hwangdog_daily',prod:'🎁',f:12406,sv:57377,likes:122,ad:1797,ov:55580,url:'https://www.instagram.com/hwangdog_daily'},
+  {u:'it_hee_',prod:'💧',f:10000,sv:43340,likes:0,ad:0,ov:43340,url:'https://www.instagram.com/it_hee_'},
+  {u:'haelog.record',prod:'🎁',f:13581,sv:43240,likes:340,ad:0,ov:43240,url:'https://www.instagram.com/haelog.record'},
+  {u:'ddoa.review',prod:'💧',f:12781,sv:40533,likes:0,ad:0,ov:40533,url:'https://www.instagram.com/ddoa.review'},
+  {u:'silver._.mouse._',prod:'🧴',f:7277,sv:27033,likes:264,ad:0,ov:27033,url:'https://www.instagram.com/silver._.mouse._'},
+  {u:'k_imbeauty',prod:'🎁',f:10344,sv:23530,likes:263,ad:0,ov:23530,url:'https://www.instagram.com/k_imbeauty'},
+  {u:'atozbibi',prod:'💧',f:16283,sv:23218,likes:62,ad:19358,ov:3860,url:'https://www.instagram.com/atozbibi'},
+  {u:'s2._seul',prod:'💧',f:16061,sv:18036,likes:1003,ad:61,ov:17975,url:'https://www.instagram.com/s2._seul'},
+  {u:'uhyeoniz',prod:'🎁',f:41198,sv:16083,likes:0,ad:0,ov:16083,url:'https://www.instagram.com/uhyeoniz'},
+  {u:'oonnimoments',prod:'🎁',f:10108,sv:15552,likes:0,ad:199,ov:15353,url:'https://www.instagram.com/oonnimoments'},
+  {u:'elly__glow',prod:'🧴',f:40835,sv:14971,likes:213,ad:0,ov:14971,url:'https://www.instagram.com/elly__glow'},
+  {u:'iffyssi',prod:'🧴',f:20461,sv:14542,likes:57,ad:6696,ov:7846,url:'https://www.instagram.com/iffyssi'},
+  {u:'su._.by',prod:'💧',f:11167,sv:24200,likes:0,ad:0,ov:24200,url:'https://www.instagram.com/su._.by'},
+  {u:'bomin._.04',prod:'💧',f:2552,sv:21882,likes:0,ad:13485,ov:8397,url:'https://www.instagram.com/bomin._.04'},
+  {u:'rudaya_nolja',prod:'🧴',f:13751,sv:10324,likes:116,ad:35,ov:10289,url:'https://www.instagram.com/rudaya_nolja'},
+  {u:'vseonq',prod:'💧',f:23799,sv:6388,likes:0,ad:0,ov:6388,url:'https://www.instagram.com/vseonq'},
+  {u:'bli_sso',prod:'💧',f:17718,sv:5555,likes:82,ad:0,ov:5555,url:'https://www.instagram.com/bli_sso'},
+  {u:'nicole_cos._',prod:'🎁',f:2433,sv:5412,likes:0,ad:0,ov:5412,url:'https://www.instagram.com/nicole_cos._'},
+  {u:'beautyr_yul',prod:'🎁',f:4723,sv:7078,likes:27,ad:3977,ov:3101,url:'https://www.instagram.com/beautyr_yul'},
+  {u:'yebibim0_0',prod:'🧴',f:2485,sv:5135,likes:0,ad:0,ov:5135,url:'https://www.instagram.com/yebibim0_0'},
+  {u:'illlikeus2',prod:'🎁',f:4728,sv:3762,likes:0,ad:2403,ov:1359,url:'https://www.instagram.com/illlikeus2'},
+  {u:'yoondongja',prod:'🧴',f:17445,sv:2620,likes:0,ad:0,ov:2620,url:'https://www.instagram.com/yoondongja'},
+  {u:'xxmdhx',prod:'💧',f:2597,sv:2441,likes:14,ad:73,ov:2368,url:'https://www.instagram.com/xxmdhx'},
+  {u:'hyyye.r',prod:'💧',f:3559,sv:2403,likes:19,ad:0,ov:2403,url:'https://www.instagram.com/hyyye.r'},
+  {u:'ha._.gyoung',prod:'🎁',f:4806,sv:2219,likes:54,ad:0,ov:2219,url:'https://www.instagram.com/ha._.gyoung'},
+  {u:'da_y00ung',prod:'💧',f:6312,sv:2093,likes:0,ad:0,ov:2093,url:'https://www.instagram.com/da_y00ung'},
+  {u:'j_hyun110',prod:'🧴',f:11176,sv:1729,likes:54,ad:0,ov:1729,url:'https://www.instagram.com/j_hyun110'},
+  {u:'foryoufrom_j',prod:'🧴',f:10299,sv:1627,likes:33,ad:897,ov:730,url:'https://www.instagram.com/foryoufrom_j'},
+  {u:'luvyeso',prod:'🎁',f:1409,sv:1617,likes:0,ad:8,ov:1609,url:'https://www.instagram.com/luvyeso'},
+  {u:'jungeiii',prod:'🎁',f:4313,sv:1663,likes:0,ad:0,ov:1663,url:'https://www.instagram.com/jungeiii'},
+  {u:'chaerishxx',prod:'🧴',f:19528,sv:1498,likes:142,ad:0,ov:1498,url:'https://www.instagram.com/chaerishxx'},
+  {u:'berryzzin',prod:'🧴',f:20073,sv:1430,likes:0,ad:43,ov:1387,url:'https://www.instagram.com/berryzzin'},
+  {u:'yuna__2182',prod:'🧴',f:19107,sv:1268,likes:0,ad:543,ov:725,url:'https://www.instagram.com/yuna__2182'},
+  {u:'b_xxni',prod:'🧴',f:12301,sv:1147,likes:37,ad:565,ov:582,url:'https://www.instagram.com/b_xxni'},
+  {u:'by_songvely_',prod:'🎁',f:24162,sv:1146,likes:0,ad:0,ov:1146,url:'https://www.instagram.com/by_songvely_'},
+  {u:'bsbs_dddungaing',prod:'🎁',f:1804,sv:2129,likes:0,ad:0,ov:2129,url:'https://www.instagram.com/bsbs_dddungaing'},
+  {u:'rin.eee__',prod:'💧',f:3487,sv:997,likes:0,ad:0,ov:997,url:'https://www.instagram.com/rin.eee__'},
+  {u:'jae_hyun_22',prod:'💧',f:10105,sv:961,likes:21,ad:700,ov:261,url:'https://www.instagram.com/jae_hyun_22'},
+  {u:'son_skin_beauty',prod:'🎁',f:10256,sv:950,likes:35,ad:0,ov:950,url:'https://www.instagram.com/son_skin_beauty'},
+  {u:'cherish___su',prod:'🧴',f:2205,sv:909,likes:40,ad:257,ov:652,url:'https://www.instagram.com/cherish___su'},
+  {u:'da_beautye',prod:'💧',f:2177,sv:820,likes:61,ad:0,ov:820,url:'https://www.instagram.com/da_beautye'},
+  {u:'ddoleeu',prod:'🧴',f:2510,sv:816,likes:5,ad:0,ov:816,url:'https://www.instagram.com/ddoleeu'},
+  {u:'kw.nyun',prod:'💧',f:1793,sv:813,likes:0,ad:81,ov:732,url:'https://www.instagram.com/kw.nyun'},
+  {u:'_yeni_o.o',prod:'💧',f:2497,sv:804,likes:15,ad:0,ov:804,url:'https://www.instagram.com/_yeni_o.o'},
+  {u:'hyang_stagramm',prod:'🧴',f:3447,sv:767,likes:30,ad:831,ov:636,url:'https://www.instagram.com/hyang_stagramm'},
+  {u:'from._.josee',prod:'🧴',f:10486,sv:720,likes:11,ad:0,ov:720,url:'https://www.instagram.com/from._.josee'},
+  {u:'rozy_su',prod:'🧴',f:8141,sv:712,likes:21,ad:4696,ov:16,url:'https://www.instagram.com/rozy_su'},
+  {u:'faveshion_',prod:'🧴',f:44391,sv:655,likes:0,ad:0,ov:655,url:'https://www.instagram.com/faveshion_'},
+  {u:'yeon_ees',prod:'💧',f:2177,sv:643,likes:0,ad:1968,ov:275,url:'https://www.instagram.com/yeon_ees'},
+  {u:'joyujin__',prod:'🎁',f:10339,sv:604,likes:78,ad:0,ov:604,url:'https://www.instagram.com/joyujin__'},
+  {u:'xyoobu',prod:'💧',f:1165,sv:539,likes:27,ad:3130,ov:0,url:'https://www.instagram.com/xyoobu'},
+  {u:'_byscarlett',prod:'🧴',f:10019,sv:528,likes:0,ad:66,ov:462,url:'https://www.instagram.com/_byscarlett'},
+  {u:'minjudyo',prod:'🧴',f:10511,sv:517,likes:21,ad:4,ov:513,url:'https://www.instagram.com/minjudyo'},
+  {u:'0a.0919',prod:'🎁',f:3732,sv:469,likes:0,ad:68,ov:401,url:'https://www.instagram.com/0a.0919'},
+  {u:'its.wins0me',prod:'🧴',f:6831,sv:396,likes:21,ad:0,ov:396,url:'https://www.instagram.com/its.wins0me'},
+  {u:'vanilla.ra',prod:'🎁',f:5319,sv:307,likes:0,ad:0,ov:307,url:'https://www.instagram.com/vanilla.ra'},
+];
+ 
+const dailyData = [
+  {d:'04-01',c:37509,i:1204,cl:39,tp:111,cpv:338,r:1155,s:467,p:0,rev:0},
+  {d:'04-02',c:114113,i:8452,cl:113,tp:208,cpv:549,r:7785,s:499,p:0,rev:0},
+  {d:'04-03',c:441154,i:22977,cl:209,tp:886,cpv:498,r:21375,s:1061,p:0,rev:0},
+  {d:'04-04',c:272678,i:9620,cl:315,tp:3312,cpv:82,r:7259,s:489,p:0,rev:0},
+  {d:'04-05',c:328870,i:15328,cl:415,tp:11064,cpv:30,r:8596,s:504,p:0,rev:0},
+  {d:'04-06',c:231675,i:10206,cl:352,tp:6776,cpv:34,r:6129,s:601,p:0,rev:0},
+  {d:'04-07',c:108640,i:3413,cl:204,tp:2087,cpv:52,r:2031,s:452,p:0,rev:0},
+  {d:'04-08',c:106245,i:3306,cl:211,tp:2240,cpv:47,r:1893,s:529,p:0,rev:0},
+  {d:'04-09',c:83155,i:4076,cl:181,tp:2571,cpv:32,r:2367,s:430,p:2,rev:122020},
+  {d:'04-10',c:104954,i:3516,cl:226,tp:2442,cpv:43,r:2114,s:389,p:0,rev:0},
+  {d:'04-11',c:87182,i:4005,cl:194,tp:3025,cpv:29,r:2443,s:294,p:1,rev:54900},
+  {d:'04-12',c:124896,i:7013,cl:255,tp:5046,cpv:25,r:4076,s:336,p:2,rev:87120},
+  {d:'04-13',c:128589,i:12635,cl:205,tp:1141,cpv:113,r:11797,s:374,p:0,rev:0},
+  {d:'04-14',c:91763,i:6124,cl:147,tp:161,cpv:570,r:5951,s:357,p:0,rev:0},
+  {d:'04-15',c:112694,i:4642,cl:296,tp:711,cpv:158,r:4271,s:367,p:3,rev:139210},
+  {d:'04-16',c:385774,i:7668,cl:178,tp:255,cpv:1513,r:6682,s:409,p:2,rev:98820},
+  {d:'04-17',c:251397,i:4515,cl:124,tp:257,cpv:978,r:4016,s:483,p:0,rev:0},
+  {d:'04-18',c:203720,i:10814,cl:170,tp:216,cpv:943,r:9989,s:287,p:8,rev:523670},
+  {d:'04-19',c:96642,i:5186,cl:75,tp:132,cpv:732,r:4947,s:187,p:0,rev:0},
+  {d:'04-20 📍',c:1764984,i:694844,cl:1555,tp:362,cpv:4875,r:395125,s:2237,p:33,rev:2037995},
+];
+ 
+// ── 오가닉 테이블 렌더 ─────────────────────────────────────────
+const fmt = {
+  int: v => Number(v).toLocaleString('ko-KR'),
+  pct: v => Math.round(v) + '%',
+};
+ 
+const orgTbody = document.getElementById('organic-tbody');
+const sortedOrg = [...organicData].sort((a,b)=>b.sv-a.sv);
+sortedOrg.forEach(r => {
+  const orgPct = r.sv>0 ? Math.round(r.ov/r.sv*100) : 0;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td class="text"><a href="${r.url}" target="_blank">@${r.u}</a></td>
+    <td class="center">${r.prod}</td>
+    <td class="num">${fmt.int(r.f)}</td>
+    <td class="num"><strong>${fmt.int(r.sv)}</strong></td>
+    <td class="num">${fmt.int(r.likes)}</td>
+    <td class="num">${fmt.int(r.ad)}</td>
+    <td class="num">${fmt.int(r.ov)}</td>
+    <td class="num">${fmt.pct(orgPct)}</td>
+  `;
+  orgTbody.appendChild(tr);
+});
+ 
+// ── 일별 테이블 렌더 ──────────────────────────────────────────
+const dailyTbody = document.getElementById('daily-tbody');
+let totals = {c:0,i:0,cl:0,tp:0,r:0,s:0,p:0,rev:0};
+dailyData.forEach(r => {
+  const cpv = r.tp>0?Math.round(r.c/r.tp):0;
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td class="text">${r.d}</td>
+    <td class="num">${fmt.int(r.c)}</td>
+    <td class="num">${fmt.int(r.i)}</td>
+    <td class="num">${fmt.int(r.cl)}</td>
+    <td class="num">${fmt.int(r.tp)}</td>
+    <td class="num">${cpv}원</td>
+    <td class="num">${fmt.int(r.r)}</td>
+    <td class="num">${fmt.int(r.s)}</td>
+    <td class="num">${r.p}</td>
+    <td class="num">${fmt.int(r.rev)}</td>
+  `;
+  dailyTbody.appendChild(tr);
+  totals.c+=r.c; totals.i+=r.i; totals.cl+=r.cl; totals.tp+=r.tp;
+  totals.r+=r.r; totals.s+=r.s; totals.p+=r.p; totals.rev+=r.rev;
+});
+const totalCpv = totals.tp>0?Math.round(totals.c/totals.tp):0;
+const totalRow = document.createElement('tr');
+totalRow.className='total-row';
+totalRow.innerHTML=`
+  <td class="text">합계</td>
+  <td class="num">${fmt.int(totals.c)}</td>
+  <td class="num">${fmt.int(totals.i)}</td>
+  <td class="num">${fmt.int(totals.cl)}</td>
+  <td class="num">${fmt.int(totals.tp)}</td>
+  <td class="num">${totalCpv}원</td>
+  <td class="num">${fmt.int(totals.r)}</td>
+  <td class="num">${fmt.int(totals.s)}</td>
+  <td class="num">${totals.p}</td>
+  <td class="num">${fmt.int(totals.rev)}</td>
+`;
+dailyTbody.appendChild(totalRow);
+ 
+// ── 탭 전환 ──────────────────────────────────────────────────
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.target).classList.add('active');
+  });
+});
+ 
+// ── 테이블 정렬 ──────────────────────────────────────────────
+document.querySelectorAll('th[data-sort]').forEach(th => {
+  th.addEventListener('click', () => {
+    const table = th.closest('table');
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr:not(.total-row)'));
+    const idx = th.cellIndex;
+    const isNum = th.dataset.sort === 'num';
+    const asc = !th.classList.contains('sort-asc');
+    table.querySelectorAll('th').forEach(h=>h.classList.remove('sort-asc','sort-desc'));
+    th.classList.add(asc?'sort-asc':'sort-desc');
+    rows.sort((a,b)=>{
+      let va=a.cells[idx]?.textContent.replace(/[,%+원회개건]/g,'').trim()||'';
+      let vb=b.cells[idx]?.textContent.replace(/[,%+원회개건]/g,'').trim()||'';
+      if(isNum){va=parseFloat(va)||0;vb=parseFloat(vb)||0;}
+      return asc?(va>vb?1:-1):(va<vb?1:-1);
+    });
+    rows.forEach(r=>tbody.appendChild(r));
+  });
+});
+</script>
+</body>
+</html>
+ 
